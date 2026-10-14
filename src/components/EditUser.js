@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 function EditUser() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ id, name: '', email: '', phone: '', address: '' });
+  const [formData, setFormData] = useState({ id, name: '', email: '', phone: '', address: '', password: '' });
   const [errors, setErrors] = useState({});
   const [image, setImage] = useState('');
   const [preview, setPreview] = useState('');
@@ -14,19 +14,71 @@ function EditUser() {
   useEffect(() => {
     getUsers()
   }, [])
+
   const getUsers = async () => {
     try {
-      const response = await axios.get(`http://localhost:7777/api/get-singleuser/${id}`)
-      setFormData(response.data.data)
+      const response = await axios.get(
+        `http://localhost:7777/api/get-singleuser/${id}`,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer " + token
+          },
+        }
+      );
+
+      const user = response.data.data;
+
+      setFormData({
+        id: user._id || id,
+        name: user.name || '',
+        email: user.email || '',
+        password: '',
+      });
+
+      if (user.image) {
+        setPreview(user.image);
+      }
     } catch (error) {
-      console.log(error.message)
+      console.error(
+        'Error fetching user:',
+        error.response?.data || error.message
+      );
     }
-  }
+  };
+
+  // const validate = () => {
+  //   const newErrors = {};
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   const phoneRegex = /^[0-9]{6,15}$/;
+  //   const mobileRegex = /^[6-9][0-9]{9}$/;
+
+  //   if (!formData.name) {
+  //     newErrors.name = 'Name is required';
+  //   } else if (formData.name.length < 3) {
+  //     newErrors.name = 'Name must be at least 3 characters';
+  //   }
+
+  //   if (!formData.email) {
+  //     newErrors.email = 'Email is required';
+  //   } else if (!emailRegex.test(formData.email)) {
+  //     newErrors.email = 'Enter a valid email address';
+  //   }
+
+  //   if (!formData.phone) {
+  //     newErrors.phone = 'Phone is required';
+  //   } else if (!phoneRegex.test(formData.phone)) {
+  //     newErrors.phone = 'Phone must be 6 to 15 digits';
+  //   }
+
+
+
+  //   return newErrors;
+  // };
+
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{6,15}$/;
-    const mobileRegex = /^[6-9][0-9]{9}$/;
 
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
@@ -40,16 +92,9 @@ function EditUser() {
       newErrors.email = 'Enter a valid email address';
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    } else if (!phoneRegex.test(formData.phone)) {
-      newErrors.phone = 'Phone must be 6 to 15 digits';
-    }
-
-
-
     return newErrors;
   };
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,25 +114,31 @@ function EditUser() {
       setErrors(validationErrors);
       return;
     }
-
     setErrors({});
     try {
       const data = new FormData();
-      data.append('name', formData.name)
-      data.append('email', formData.email)
-      data.append('password', formData.password)
+      data.append('name', formData.name);
+      data.append('email', formData.email);
+      if (formData.password) {
+        data.append('password', formData.password);
+      }
       if (image) {
         data.append('image', image);
       }
-      const response = await axios.put(`http://localhost:7777/api/updateuser/${id}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Authorization": "Bearer " + token
+      const response = await axios.put(
+        `http://localhost:7777/api/updateuser/${id}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer " + token
+          },
         }
-      })
+      );
       if (response.data.data) {
-        navigate("/dashboard")
+        navigate('/dashboard');
       }
+
     } catch (error) {
       console.log(error.message)
     }
@@ -147,19 +198,19 @@ function EditUser() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="edit-phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
+            <label htmlFor="edit-password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
             </label>
             <input
-              type="text"
-              id="edit-phone"
-              name="phone"
-              value={formData.phone}
+              type="password"
+              id="edit-password"
+              name="password"
+              value={formData.password}
               onChange={handleChange}
-              className={inputClass('phone')}
-              placeholder="Enter phone number"
+              className={inputClass('password')}
+              placeholder="Enter new password "
             />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
 
           {/* <div className="mb-6">

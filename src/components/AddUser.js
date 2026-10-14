@@ -10,11 +10,10 @@ function AddUser() {
   const [preview, setPreview] = useState('');
   const token = localStorage.getItem('token')
 
+
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{6,15}$/;
-    const mobileRegex = /^[6-9][0-9]{9}$/;
 
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
@@ -28,21 +27,15 @@ function AddUser() {
       newErrors.email = 'Enter a valid email address';
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    } else if (!phoneRegex.test(formData.phone)) {
-      newErrors.phone = 'Phone must be 6 to 15 digits';
+    if (!formData.password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
     }
-
-    if (!formData.mobile.trim()) {
-      newErrors.mobile = 'Mobile number is required';
-    } else if (!mobileRegex.test(formData.mobile)) {
-      newErrors.mobile = 'Enter a valid 10 digit mobile number';
-    }
-
 
     return newErrors;
   };
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -138,38 +131,6 @@ function AddUser() {
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
-          {/* 
-          <div className="mb-4">
-            <label htmlFor="add-phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
-            </label>
-            <input
-              type="text"
-              id="add-phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className={inputClass('phone')}
-              placeholder="Enter phone number"
-            />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="add-mobile" className="block text-sm font-medium text-gray-700 mb-1">
-              Mobile Number
-            </label>
-            <input
-              type="text"
-              id="add-mobile"
-              name="mobile"
-              value={formData.mobile}
-              onChange={handleChange}
-              className={inputClass('mobile')}
-              placeholder="Enter 10 digit mobile number"
-            />
-            {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
-          </div> */}
           <div className="mb-4">
             <label htmlFor="add-password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -178,8 +139,8 @@ function AddUser() {
               type="password"
               id="add-password"
               name="password"
-              value={formData.name}
-              // onChange={handleChange}
+              value={formData.password}
+              onChange={handleChange}
               className={inputClass('password')}
               placeholder="Enter password"
             />
