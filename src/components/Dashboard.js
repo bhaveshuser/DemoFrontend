@@ -11,7 +11,7 @@ function Dashboard() {
   }, [])
   const getUserData = async () => {
     try {
-      const response = await axios.get("http://localhost:7777/api/get-users", {
+      const response = await axios.get("https://demobackend-241v.onrender.com/api/get-users", {
         headers: {
           "Content-Type": "Application/JSON",
           "Authorization": "Bearer " + token
@@ -25,7 +25,7 @@ function Dashboard() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:7777/api/deleteuser/${id}`, {
+      const response = await axios.delete(`https://demobackend-241v.onrender.com/api/deleteuser/${id}`, {
         headers: {
           "Content-Type": "Application/JSON",
           "Authorization": "Bearer " + token

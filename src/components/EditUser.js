@@ -18,7 +18,7 @@ function EditUser() {
   const getUsers = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:7777/api/get-singleuser/${id}`,
+        `https://demobackend-241v.onrender.com/api/get-singleuser/${id}`,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -126,7 +126,7 @@ function EditUser() {
         data.append('image', image);
       }
       const response = await axios.put(
-        `http://localhost:7777/api/updateuser/${id}`,
+        `https://demobackend-241v.onrender.com/api/updateuser/${id}`,
         data,
         {
           headers: {

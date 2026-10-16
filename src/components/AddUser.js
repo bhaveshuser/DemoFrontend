@@ -65,7 +65,7 @@ function AddUser() {
       if (image) {
         data.append('image', image);
       }
-      const response = await axios.post("http://localhost:7777/api/add-user", data, {
+      const response = await axios.post("https://demobackend-241v.onrender.com/api/add-user", data, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": "Bearer " + token
